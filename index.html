@@ -44,9 +44,14 @@
       box-sizing: border-box;
     }
 
-    button {
+    .button-group {
+      display: flex;
+      gap: 10px;
       margin-top: 20px;
-      width: 100%;
+    }
+
+    button {
+      flex: 1;
       padding: 10px;
       background-color: #007acc;
       color: white;
@@ -94,7 +99,10 @@
     <label>해 2:</label>
     <input type="number" id="answer2">
 
-    <button onclick="checkAnswer()">제출</button>
+    <div class="button-group">
+      <button onclick="checkAnswer()">제출</button>
+      <button onclick="nextQuestion()">다른 문제</button>
+    </div>
 
     <div class="feedback" id="feedback"></div>
 
@@ -127,15 +135,8 @@
       const feedback = document.getElementById("feedback");
 
       if ((ans1 === root1 && ans2 === root2) || (ans1 === root2 && ans2 === root1)) {
-        feedback.innerText = "🎉 정답입니다! 다음 문제로 넘어갑니다.";
+        feedback.innerText = "🎉 정답입니다!";
         feedback.style.color = "green";
-
-        setTimeout(() => {
-          generateEquation();
-          document.getElementById("answer1").value = "";
-          document.getElementById("answer2").value = "";
-          feedback.innerText = "";
-        }, 2000);
       } else {
         feedback.innerText = "❌ 오답입니다.";
         feedback.style.color = "red";
@@ -155,7 +156,14 @@
       wrongList.appendChild(div);
     }
 
-    // 시작 시 문제 생성
+    function nextQuestion() {
+      generateEquation();
+      document.getElementById("answer1").value = "";
+      document.getElementById("answer2").value = "";
+      document.getElementById("feedback").innerText = "";
+    }
+
+    // 첫 문제 생성
     generateEquation();
   </script>
 </body>
