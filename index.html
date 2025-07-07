@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>이차방정식 퀴즈</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .quiz-box { margin-bottom: 20px; }
+    .feedback { font-weight: bold; margin-top: 10px; }
+    .wrong-answers { margin-top: 20px; color: red; }
+  </style>
+</head>
+<body>
+  <h1>이차방정식 퀴즈</h1>
+  <div class="quiz-box">
+    <p id="equation"></p>
+    <label>해 1: <input type="number" id="answer1" /></label><br>
+    <label>해 2: <input type="number" id="answer2" /></label><br><br>
+    <button onclick="checkAnswer()">제출</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="wrong-answers">
+    <h3>오답 목록:</h3>
+    <ul id="wrongList"></ul>
+  </div>
+
+  <script>
+    let root1, root2;
+
+    function generateEquation() {
+      // -10 ~ 10 범위에서 서로 다른 두 정수 해를 생성
+      do {
+        root1 = Math.floor(Math.random() * 21) - 10;
+        root2 = Math.floor(Math.random() * 21) - 10;
+      } while (root1 === root2);
+
+      const a = 1; // 단순화를 위해 a = 1로 고정
+      const b = -(root1 + root2);
+      const c = root1 * root2;
+
+      const equationText = `x² ${b >= 0 ? '+ ' + b : '- ' + (-b)}x ${c >= 0 ? '+ ' + c : '- ' + (-c)} = 0`;
+      document.getElementById("equation").innerText = "방정식: " + equationText;
+    }
+
+    function checkAnswer() {
+      const ans1 = parseInt(document.getElementById("answer1").value);
+      const ans2 = parseInt(document.getElementById("answer2").value);
+      const feedback = document.getElementById("feedback");
+
+      if ((ans1 === root1 && ans2 === root2) || (ans1 === root2 && ans2 === root1)) {
+        feedback.innerText = "정답입니다! 🎉";
+        feedback.style.color = "green";
+        setTimeout(() => {
+          generateEquation();
+          document.getElementById("answer1").value = "";
+          document.getElementById("answer2").value = "";
+          feedback.innerText = "";
+        }, 1500);
+      } else {
+        feedback.innerText = "오답입니다. 다시 시도해보세요.";
+        feedback.style.color = "red";
+        logWrongAnswer(ans1, ans2);
+      }
+    }
+
+    function logWrongAnswer(ans1, ans2) {
+      const ul = document.getElementById("wrongList");
+      const li = document.createElement("li");
+      li.textContent = `(${ans1}, ${ans2})`;
+      ul.appendChild(li);
+    }
+
+    // 초기 문제 생성
+    generateEquation();
+  </script>
+</body>
+</html>
