@@ -4,43 +4,121 @@
   <meta charset="UTF-8">
   <title>이차방정식 퀴즈</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .quiz-box { margin-bottom: 20px; }
-    .feedback { font-weight: bold; margin-top: 10px; }
-    .wrong-answers { margin-top: 20px; color: red; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .equation {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    .wrong-answers {
+      margin-top: 30px;
+    }
+
+    .wrong-answers h3 {
+      color: #d00000;
+    }
+
+    .wrong-item {
+      background-color: #ffecec;
+      border-left: 5px solid #d00000;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
-  <h1>이차방정식 퀴즈</h1>
-  <div class="quiz-box">
-    <p id="equation"></p>
-    <label>해 1: <input type="number" id="answer1" /></label><br>
-    <label>해 2: <input type="number" id="answer2" /></label><br><br>
-    <button onclick="checkAnswer()">제출</button>
-    <div class="feedback" id="feedback"></div>
-  </div>
+  <div class="container">
+    <h1>이차방정식 퀴즈</h1>
+    <div class="equation" id="equation"></div>
 
-  <div class="wrong-answers">
-    <h3>오답 목록:</h3>
-    <ul id="wrongList"></ul>
+    <label>해 1:</label>
+    <input type="number" id="answer1">
+
+    <label>해 2:</label>
+    <input type="number" id="answer2">
+
+    <button onclick="checkAnswer()">제출</button>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="wrong-answers">
+      <h3>오답 목록</h3>
+      <div id="wrongList"></div>
+    </div>
   </div>
 
   <script>
     let root1, root2;
+    let currentEquation = "";
 
     function generateEquation() {
-      // -10 ~ 10 범위에서 서로 다른 두 정수 해를 생성
       do {
         root1 = Math.floor(Math.random() * 21) - 10;
         root2 = Math.floor(Math.random() * 21) - 10;
       } while (root1 === root2);
 
-      const a = 1; // 단순화를 위해 a = 1로 고정
       const b = -(root1 + root2);
       const c = root1 * root2;
 
-      const equationText = `x² ${b >= 0 ? '+ ' + b : '- ' + (-b)}x ${c >= 0 ? '+ ' + c : '- ' + (-c)} = 0`;
-      document.getElementById("equation").innerText = "방정식: " + equationText;
+      currentEquation = `x² ${b >= 0 ? '+ ' + b : '- ' + (-b)}x ${c >= 0 ? '+ ' + c : '- ' + (-c)} = 0`;
+      document.getElementById("equation").innerText = currentEquation;
     }
 
     function checkAnswer() {
@@ -49,29 +127,35 @@
       const feedback = document.getElementById("feedback");
 
       if ((ans1 === root1 && ans2 === root2) || (ans1 === root2 && ans2 === root1)) {
-        feedback.innerText = "정답입니다! 🎉";
+        feedback.innerText = "🎉 정답입니다! 다음 문제로 넘어갑니다.";
         feedback.style.color = "green";
+
         setTimeout(() => {
           generateEquation();
           document.getElementById("answer1").value = "";
           document.getElementById("answer2").value = "";
           feedback.innerText = "";
-        }, 1500);
+        }, 2000);
       } else {
-        feedback.innerText = "오답입니다. 다시 시도해보세요.";
+        feedback.innerText = "❌ 오답입니다.";
         feedback.style.color = "red";
         logWrongAnswer(ans1, ans2);
       }
     }
 
     function logWrongAnswer(ans1, ans2) {
-      const ul = document.getElementById("wrongList");
-      const li = document.createElement("li");
-      li.textContent = `(${ans1}, ${ans2})`;
-      ul.appendChild(li);
+      const wrongList = document.getElementById("wrongList");
+      const div = document.createElement("div");
+      div.className = "wrong-item";
+      div.innerHTML = `
+        <strong>문제:</strong> ${currentEquation}<br>
+        <strong>정답 해:</strong> ${root1}, ${root2}<br>
+        <strong>입력한 값:</strong> ${ans1}, ${ans2}
+      `;
+      wrongList.appendChild(div);
     }
 
-    // 초기 문제 생성
+    // 시작 시 문제 생성
     generateEquation();
   </script>
 </body>
